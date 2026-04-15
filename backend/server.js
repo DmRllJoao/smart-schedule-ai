@@ -1,18 +1,19 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { conectarDB } from "./config/db.js";
+import agendamentoRoutes from "./routes/agendamento.js";
 
-conectarDB();
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
+app.use("/api/agendamento", agendamentoRoutes);
+
 app.get("/", (req, res) => {
   res.send("API rodando 🚀");
 });
 
-app.listen(3000, () => {
-  console.log("Servidor rodando na porta 3000");
+app.listen(4000, () => {
+  console.log("Servidor rodando na porta 4000");
 });

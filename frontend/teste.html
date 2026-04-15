@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Agendamento</title>
+</head>
+<body>
+
+<h2>Agendamento</h2>
+
+<input id="nome" placeholder="Nome"><br><br>
+<input id="servico" placeholder="Serviço"><br><br>
+<input id="data" type="date"><br><br>
+
+<button onclick="buscarHorarios()">Ver horários</button>
+
+<div id="horarios"></div>
+
+<pre id="resposta"></pre>
+
+<script>
+let horarioSelecionado = "";
+
+async function buscarHorarios() {
+  const data = document.getElementById("data").value;
+
+  const res = await fetch(`http://localhost:4000/api/agendamento/disponiveis?data=${data}`);
+  const horarios = await res.json();
+
+  const div = document.getElementById("horarios");
+  div.innerHTML = "<h3>Horários disponíveis:</h3>";
+
+  horarios.forEach(h => {
+    const btn = document.createElement("button");
+    btn.innerText = h;
+    btn.onclick = () => selecionarHorario(h);
+    div.appendChild(btn);
+  });
+}
+
+function selecionarHorario(h) {
+  horarioSelecionado = h;
+  alert("Horário selecionado: " + h);
+}
+
+async function agendar() {
+  const res = await fetch("http://localhost:4000/api/agendamento", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      nome: document.getElementById("nome").value,
+      servico: document.getElementById("servico").value,
+      data: document.getElementById("data").value,
+      hora: horarioSelecionado
+    })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("resposta").innerText =
+    JSON.stringify(data, null, 2);
+}
+</script>
+
+<br><br>
+<button onclick="agendar()">Confirmar Agendamento</button>
+
+</body>
+</html>
